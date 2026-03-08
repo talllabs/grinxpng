@@ -1,0 +1,1768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PNGTPA Proposal — Grin Creative</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ─── FONTS ─────────────────────────────────────────── */
+@font-face {
+  font-family: 'Everett';
+  src: local('Everett'), local('TWKEverett-Regular');
+  font-weight: 400;
+  font-style: normal;
+}
+
+:root {
+  --bg:       #080808;
+  --bg2:      #0f0f0f;
+  --bg3:      #161616;
+  --gold:     #C8A96E;
+  --gold2:    #a8843e;
+  --white:    #ffffff;
+  --grey:     #888;
+  --border:   rgba(255,255,255,0.08);
+  --font-head: 'Everett', 'DM Sans', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-weight: 400;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── PASSWORD ──────────────────────────────────────── */
+#pw-screen {
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--bg);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  transition: opacity 0.6s ease;
+}
+#pw-screen.hide { opacity: 0; pointer-events: none; }
+
+.pw-logo {
+  font-family: var(--font-head);
+  font-size: 13px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 60px;
+}
+.pw-label {
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--grey);
+  margin-bottom: 20px;
+}
+.pw-wrap {
+  position: relative; width: 280px;
+}
+#pw-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  color: var(--white);
+  font-family: var(--font-head);
+  font-size: 32px;
+  text-align: center;
+  letter-spacing: 10px;
+  padding: 12px 0;
+  outline: none;
+  transition: border-color 0.3s;
+}
+#pw-input:focus { border-bottom-color: var(--gold); }
+#pw-error {
+  color: #e05555;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-align: center;
+  margin-top: 16px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+#pw-error.show { opacity: 1; }
+.pw-hint {
+  margin-top: 40px;
+  font-size: 11px;
+  color: #333;
+  letter-spacing: 2px;
+}
+
+/* ─── MAIN (hidden until password) ─────────────────── */
+#main { display: none; }
+#main.show { display: block; }
+
+/* ─── NAV ───────────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  padding: 24px 48px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: linear-gradient(to bottom, rgba(8,8,8,0.95) 0%, transparent 100%);
+  transition: background 0.4s;
+}
+nav.scrolled {
+  background: rgba(8,8,8,0.97);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 48px;
+}
+.nav-logo {
+  font-family: var(--font-head);
+  font-size: 11px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-decoration: none;
+}
+.nav-links { display: flex; gap: 36px; }
+.nav-links a {
+  color: rgba(255,255,255,0.55);
+  text-decoration: none;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: color 0.3s;
+}
+.nav-links a:hover { color: var(--white); }
+
+/* ─── HERO ──────────────────────────────────────────── */
+#hero {
+  position: relative;
+  height: 100vh; width: 100%;
+  overflow: hidden;
+  display: flex; align-items: flex-end;
+  padding-bottom: 100px;
+}
+#hero-video {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  filter: brightness(0.35);
+}
+.hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(8,8,8,1) 0%, rgba(8,8,8,0.3) 50%, transparent 100%);
+}
+.hero-content {
+  position: relative; z-index: 2;
+  padding: 0 80px;
+  max-width: 1400px;
+  width: 100%;
+}
+.hero-eyebrow {
+  font-size: 11px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 28px;
+  display: block;
+}
+.hero-h1 {
+  font-family: var(--font-head);
+  font-size: 90px;
+  font-weight: 400;
+  line-height: 113px;
+  color: var(--white);
+  max-width: 900px;
+}
+.hero-sub {
+  margin-top: 36px;
+  font-size: 15px;
+  color: rgba(255,255,255,0.55);
+  letter-spacing: 1px;
+  max-width: 480px;
+  line-height: 1.8;
+}
+.hero-scroll {
+  position: absolute; bottom: 40px; right: 80px;
+  font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+  display: flex; align-items: center; gap: 16px;
+  z-index: 2;
+}
+.scroll-line {
+  width: 40px; height: 1px; background: rgba(255,255,255,0.2);
+}
+
+/* ─── SECTIONS ──────────────────────────────────────── */
+section {
+  padding: 120px 80px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+section.full-bleed {
+  max-width: 100%;
+  padding: 120px 0;
+}
+.section-sep {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 0 80px;
+}
+
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 28px;
+  display: block;
+}
+.h2 {
+  font-family: var(--font-head);
+  font-size: 64px;
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--white);
+  margin-bottom: 40px;
+}
+.h3 {
+  font-family: var(--font-head);
+  font-size: 36px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--white);
+  margin-bottom: 20px;
+}
+.body-text {
+  font-size: 16px;
+  line-height: 1.9;
+  color: rgba(255,255,255,0.65);
+  max-width: 680px;
+}
+.body-text-wide {
+  font-size: 16px;
+  line-height: 1.9;
+  color: rgba(255,255,255,0.65);
+}
+
+/* ─── ABOUT GRIN ────────────────────────────────────── */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+.about-pillars {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  margin-top: 60px;
+}
+.pillar {
+  background: var(--bg);
+  padding: 32px;
+  transition: background 0.3s;
+}
+.pillar:hover { background: var(--bg3); }
+.pillar-label {
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+  display: block;
+}
+.pillar p {
+  font-size: 14px;
+  line-height: 1.7;
+  color: rgba(255,255,255,0.55);
+}
+
+/* ─── CLIENTS ───────────────────────────────────────── */
+.clients-intro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  margin-bottom: 80px;
+}
+.client-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+.client-item {
+  background: var(--bg);
+  padding: 32px 24px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.3s;
+  cursor: default;
+}
+.client-item:hover { background: var(--bg3); }
+.client-item span {
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: rgba(255,255,255,0.4);
+  text-align: center;
+  transition: color 0.3s;
+}
+.client-item:hover span { color: var(--white); }
+
+/* ─── TEAM ──────────────────────────────────────────── */
+.team-intro {
+  max-width: 640px;
+  margin-bottom: 80px;
+}
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+}
+.team-card {
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  background: var(--bg3);
+}
+.team-card-inner {
+  aspect-ratio: 3/4;
+  position: relative;
+  overflow: hidden;
+}
+.team-photo {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  filter: grayscale(60%) contrast(1.1);
+  transition: filter 0.6s, transform 0.6s;
+  display: block;
+}
+.team-photo-placeholder {
+  width: 100%; height: 100%;
+  background: var(--bg3);
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column;
+  gap: 12px;
+}
+.team-initials {
+  font-family: var(--font-head);
+  font-size: 48px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.15);
+}
+.team-card:hover .team-photo {
+  filter: grayscale(0%) contrast(1);
+  transform: scale(1.04);
+}
+.team-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(8,8,8,0.95) 0%, transparent 60%);
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 32px;
+}
+.team-name {
+  font-family: var(--font-head);
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--white);
+  margin-bottom: 4px;
+}
+.team-role {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.team-bio-panel {
+  padding: 28px 32px;
+  background: var(--bg3);
+  border-top: 1px solid var(--border);
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.5s ease, padding 0.3s;
+}
+.team-card.open .team-bio-panel {
+  max-height: 300px;
+}
+.team-bio-panel p {
+  font-size: 14px;
+  line-height: 1.8;
+  color: rgba(255,255,255,0.6);
+}
+.team-coming-soon {
+  width: 100%;
+  aspect-ratio: 3/4;
+  background: var(--bg3);
+  border: 1px dashed var(--border);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 12px;
+}
+.team-coming-soon span {
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #333;
+}
+
+/* ─── WHY GRIN ──────────────────────────────────────── */
+.why-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  margin-top: 60px;
+}
+.why-item {
+  background: var(--bg);
+  padding: 48px;
+  transition: background 0.3s;
+}
+.why-item:hover { background: var(--bg3); }
+.why-num {
+  font-family: var(--font-head);
+  font-size: 11px;
+  color: var(--gold);
+  letter-spacing: 3px;
+  margin-bottom: 20px;
+  display: block;
+}
+.why-item h4 {
+  font-family: var(--font-head);
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--white);
+  margin-bottom: 16px;
+}
+.why-item p {
+  font-size: 14px;
+  line-height: 1.8;
+  color: rgba(255,255,255,0.5);
+}
+
+/* ─── ASSIGNMENT ────────────────────────────────────── */
+.assignment-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: start;
+}
+.assignment-points {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.point-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: padding-left 0.3s;
+}
+.point-row:hover { padding-left: 8px; }
+.point-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  margin-top: 7px;
+  flex-shrink: 0;
+}
+.point-row p {
+  font-size: 16px;
+  line-height: 1.7;
+  color: rgba(255,255,255,0.65);
+}
+
+/* ─── RESEARCH ──────────────────────────────────────── */
+.research-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 60px;
+  overflow-x: auto;
+}
+.rtab {
+  padding: 16px 28px;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color 0.3s, border-color 0.3s;
+  background: none; border-top: none; border-left: none; border-right: none;
+}
+.rtab.active { color: var(--white); border-bottom-color: var(--gold); }
+.rtab:hover { color: rgba(255,255,255,0.7); }
+.rtab-content { display: none; }
+.rtab-content.active { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+.rtab-body p {
+  font-size: 16px;
+  line-height: 1.9;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 20px;
+}
+.rtab-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.rtab-list li {
+  padding: 16px 20px;
+  background: var(--bg3);
+  border-left: 2px solid var(--gold);
+  font-size: 14px;
+  color: rgba(255,255,255,0.65);
+  line-height: 1.6;
+}
+
+/* ─── PHASES ────────────────────────────────────────── */
+.phases-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.phase-item {
+  background: var(--bg3);
+  border: 1px solid transparent;
+  transition: border-color 0.3s;
+  overflow: hidden;
+}
+.phase-item.open { border-color: var(--gold); }
+.phase-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 36px 48px;
+  cursor: pointer;
+  gap: 24px;
+}
+.phase-header:hover { background: rgba(255,255,255,0.02); }
+.phase-left { display: flex; align-items: center; gap: 36px; }
+.phase-num {
+  font-family: var(--font-head);
+  font-size: 48px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.08);
+  line-height: 1;
+  min-width: 60px;
+}
+.phase-item.open .phase-num { color: var(--gold); }
+.phase-title {
+  font-family: var(--font-head);
+  font-size: 24px;
+  font-weight: 400;
+  color: var(--white);
+}
+.phase-tag {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--grey);
+  margin-top: 6px;
+}
+.phase-arrow {
+  font-size: 20px;
+  color: var(--gold);
+  transition: transform 0.4s;
+  flex-shrink: 0;
+}
+.phase-item.open .phase-arrow { transform: rotate(45deg); }
+.phase-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease;
+}
+.phase-item.open .phase-body { max-height: 800px; }
+.phase-content {
+  padding: 0 48px 48px 48px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+}
+.phase-deliverables h5 {
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 20px;
+}
+.phase-deliverables ul {
+  list-style: none;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.phase-deliverables li {
+  font-size: 14px;
+  color: rgba(255,255,255,0.55);
+  display: flex; align-items: flex-start; gap: 12px;
+  line-height: 1.6;
+}
+.phase-deliverables li::before {
+  content: '→';
+  color: var(--gold);
+  flex-shrink: 0;
+}
+
+/* ─── TIMELINE ──────────────────────────────────────── */
+.timeline-layout {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 0;
+  align-items: stretch;
+}
+.timeline-labels {
+  display: flex;
+  flex-direction: column;
+}
+.tl-label {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--grey);
+  display: flex;
+  align-items: center;
+  height: 80px;
+}
+.timeline-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.tl-phase {
+  height: 80px;
+  background: var(--bg3);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  position: relative;
+  overflow: hidden;
+}
+.tl-fill {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  background: linear-gradient(to right, rgba(200,169,110,0.15), rgba(200,169,110,0.05));
+  border-left: 2px solid var(--gold);
+  transition: width 1.2s ease;
+}
+.tl-phase-name {
+  position: relative; z-index: 1;
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: rgba(255,255,255,0.7);
+}
+.tl-weeks {
+  position: absolute; right: 24px; z-index: 1;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+
+/* ─── BUDGET ────────────────────────────────────────── */
+.budget-wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  margin-top: 60px;
+}
+.budget-phase {
+  background: var(--bg);
+  padding: 48px;
+}
+.budget-phase-title {
+  font-family: var(--font-head);
+  font-size: 28px;
+  font-weight: 400;
+  color: var(--white);
+  margin-bottom: 8px;
+}
+.budget-phase-sub {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 32px;
+  display: block;
+}
+.budget-items {
+  display: flex; flex-direction: column; gap: 12px;
+  margin-bottom: 40px;
+}
+.budget-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.budget-row span:first-child {
+  font-size: 14px;
+  color: rgba(255,255,255,0.55);
+}
+.budget-row span:last-child {
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: var(--grey);
+}
+.budget-total-label {
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--grey);
+  margin-bottom: 8px;
+  display: block;
+}
+.budget-total-value {
+  font-family: var(--font-head);
+  font-size: 48px;
+  font-weight: 400;
+  color: var(--gold);
+}
+.budget-placeholder-note {
+  font-size: 12px;
+  color: #333;
+  letter-spacing: 1px;
+  margin-top: 12px;
+}
+
+/* ─── CONTACT/FOOTER ────────────────────────────────── */
+.footer-wrap {
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  padding: 100px 80px 60px;
+}
+.footer-top {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 60px;
+  margin-bottom: 80px;
+}
+.footer-brand {
+  font-family: var(--font-head);
+  font-size: 40px;
+  font-weight: 400;
+  color: var(--white);
+  margin-bottom: 24px;
+}
+.footer-col-title {
+  font-size: 10px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 20px;
+  display: block;
+}
+.footer-col p, .footer-col a {
+  font-size: 15px;
+  color: rgba(255,255,255,0.45);
+  line-height: 2;
+  text-decoration: none;
+  display: block;
+  transition: color 0.3s;
+}
+.footer-col a:hover { color: var(--white); }
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 40px;
+  border-top: 1px solid var(--border);
+}
+.footer-bottom p {
+  font-size: 12px;
+  color: #333;
+  letter-spacing: 1px;
+}
+.footer-acknowledgement {
+  font-size: 12px;
+  color: #2a2a2a;
+  max-width: 560px;
+  line-height: 1.8;
+}
+
+/* ─── ANIMATIONS ────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ─── AWARD BADGE ───────────────────────────────────── */
+.awards-strip {
+  display: flex;
+  gap: 40px;
+  align-items: center;
+  margin-top: 48px;
+  padding-top: 48px;
+  border-top: 1px solid var(--border);
+}
+.award-item {
+  display: flex; gap: 16px; align-items: center;
+}
+.award-icon {
+  width: 40px; height: 40px;
+  border: 1px solid var(--gold);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  color: var(--gold);
+  flex-shrink: 0;
+}
+.award-text span:first-child {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+.award-text span:last-child {
+  font-size: 13px;
+  color: rgba(255,255,255,0.45);
+}
+
+/* ─── QUOTE BLOCK ───────────────────────────────────── */
+.quote-block {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 100px 80px;
+  text-align: center;
+}
+.quote-text {
+  font-family: var(--font-head);
+  font-size: 52px;
+  font-weight: 400;
+  line-height: 1.3;
+  color: var(--white);
+  max-width: 900px;
+  margin: 0 auto;
+}
+.quote-text em { color: var(--gold); font-style: normal; }
+
+/* ─── SECTION BG ALT ─────────────────────────────────── */
+.bg-alt {
+  background: var(--bg2);
+  padding: 120px 0;
+}
+.bg-alt > section {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* ─── PROGRESS BAR ──────────────────────────────────── */
+.scroll-progress {
+  position: fixed; top: 0; left: 0;
+  height: 2px;
+  background: var(--gold);
+  z-index: 9998;
+  width: 0%;
+  transition: width 0.1s;
+}
+
+/* ─── RESPONSIVE ─────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .hero-h1 { font-size: 60px; line-height: 75px; }
+  section { padding: 80px 40px; }
+  .about-grid, .clients-intro, .assignment-layout, .footer-top { grid-template-columns: 1fr; gap: 48px; }
+  .team-grid { grid-template-columns: repeat(2, 1fr); }
+  .client-list { grid-template-columns: repeat(2, 1fr); }
+  .why-grid { grid-template-columns: 1fr; }
+  .budget-wrap { grid-template-columns: 1fr; }
+  nav { padding: 20px 24px; }
+  .nav-links { gap: 20px; }
+  .footer-wrap { padding: 60px 40px 40px; }
+  .h2 { font-size: 44px; }
+  .quote-text { font-size: 36px; }
+  .phase-content { grid-template-columns: 1fr; }
+  .rtab-content.active { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 600px) {
+  .hero-h1 { font-size: 40px; line-height: 52px; }
+  section { padding: 60px 24px; }
+  .team-grid { grid-template-columns: 1fr; }
+  .nav-links { display: none; }
+  .hero-content { padding: 0 24px; }
+  .footer-wrap { padding: 60px 24px 40px; }
+  .footer-top { grid-template-columns: 1fr; gap: 40px; }
+  .section-sep { margin: 0 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- SCROLL PROGRESS -->
+<div class="scroll-progress" id="scroll-progress"></div>
+
+<!-- ─── PASSWORD SCREEN ─────────────────────────────── -->
+<div id="pw-screen">
+  <div class="pw-logo">Grin Creative</div>
+  <div class="pw-label">Enter to view proposal</div>
+  <div class="pw-wrap">
+    <input type="password" id="pw-input" placeholder="·····" autocomplete="off" spellcheck="false">
+  </div>
+  <div id="pw-error">Incorrect password</div>
+  <div class="pw-hint">Press Enter to continue</div>
+</div>
+
+<!-- ─── MAIN CONTENT ───────────────────────────────── -->
+<div id="main">
+
+  <!-- NAV -->
+  <nav id="nav">
+    <a href="#hero" class="nav-logo">Grin Creative</a>
+    <div class="nav-links">
+      <a href="#about">About</a>
+      <a href="#team">The Team</a>
+      <a href="#assignment">The Brief</a>
+      <a href="#phases">Approach</a>
+      <a href="#timeline">Timeline</a>
+      <a href="#budget">Budget</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero" style="padding:0; max-width:100%;">
+    <video autoplay muted loop playsinline id="hero-video">
+      <source src="https://grincreative.com.au/wp-content/uploads/2024/03/Grin-Reel_V3-720p30.mp4" type="video/mp4">
+    </video>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <span class="hero-eyebrow">Proposal to PNGTPA — 2025</span>
+      <h1 class="hero-h1">Destination Brand<br>&amp; Corporate Brand<br>Redevelopment</h1>
+      <p class="hero-sub">Submitted by Grin Creative Pty Ltd<br>Melbourne, Australia</p>
+    </div>
+    <div class="hero-scroll">
+      <div class="scroll-line"></div>
+      Scroll
+    </div>
+  </section>
+
+  <!-- ABOUT GRIN -->
+  <hr class="section-sep">
+  <section id="about">
+    <div class="about-grid">
+      <div>
+        <span class="eyebrow">About Grin Creative</span>
+        <h2 class="h2 reveal">Melbourne, Australia<br>Founded 2013</h2>
+        <p class="body-text reveal reveal-delay-1">Grin Creative is an award-winning creative agency serving the travel and tourism industry. We help destinations tell their story in a clear, authentic and memorable way — blending strong storytelling, thoughtful brand thinking, and clear communication.</p>
+        <div class="awards-strip reveal reveal-delay-2">
+          <div class="award-item">
+            <div class="award-icon">★</div>
+            <div class="award-text">
+              <span>Magellan Award</span>
+              <span>Walking With Shackleton — Quark Expeditions</span>
+            </div>
+          </div>
+          <div class="award-item">
+            <div class="award-icon">◆</div>
+            <div class="award-text">
+              <span>International Recognition</span>
+              <span>Multiple global tourism awards</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="about-pillars reveal">
+          <div class="pillar">
+            <span class="pillar-label">Storytelling</span>
+            <p>We build destination narratives that cut through noise and connect emotionally with travellers.</p>
+          </div>
+          <div class="pillar">
+            <span class="pillar-label">Brand Thinking</span>
+            <p>Strategic brand development grounded in research, culture and real insight.</p>
+          </div>
+          <div class="pillar">
+            <span class="pillar-label">Clear Communication</span>
+            <p>Every message crafted to land — across every channel, every market, every partner.</p>
+          </div>
+          <div class="pillar">
+            <span class="pillar-label">Our Mission</span>
+            <p>Help destinations like Papua New Guinea stand out and be remembered on the global stage.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUOTE -->
+  <div class="quote-block">
+    <p class="quote-text reveal">"Papua New Guinea is <em>unlike anywhere else</em> on earth — and its brand should be, too."</p>
+  </div>
+
+  <!-- TOURISM EXPERIENCE -->
+  <hr class="section-sep">
+  <section id="experience">
+    <div class="clients-intro">
+      <div>
+        <span class="eyebrow">Tourism Experience</span>
+        <h2 class="h2 reveal">A global portfolio<br>in travel &amp; tourism</h2>
+      </div>
+      <div>
+        <p class="body-text-wide reveal reveal-delay-1">We have worked with tourism organisations and travel brands around the world, helping destinations show their identity, culture, and unique character — on every continent, for every kind of traveller.</p>
+      </div>
+    </div>
+    <div class="client-list reveal reveal-delay-2">
+      <div class="client-item"><span>Quark Expeditions</span></div>
+      <div class="client-item"><span>Tourism Fiji</span></div>
+      <div class="client-item"><span>Tourism Malaysia</span></div>
+      <div class="client-item"><span>New Orleans Tourism</span></div>
+      <div class="client-item"><span>Hawaii Tourism</span></div>
+      <div class="client-item"><span>Solomon Islands Tourism</span></div>
+      <div class="client-item"><span>The Travel Corporation</span></div>
+      <div class="client-item"><span>South African Tourism</span></div>
+    </div>
+  </section>
+
+  <!-- WHY GRIN -->
+  <hr class="section-sep">
+  <section id="why">
+    <span class="eyebrow">Why Work With Grin</span>
+    <h2 class="h2 reveal">What we bring<br>to every project</h2>
+    <div class="why-grid">
+      <div class="why-item reveal">
+        <span class="why-num">01</span>
+        <h4>Deep Tourism Expertise</h4>
+        <p>Deep understanding of tourism storytelling and experience working across many travel destinations globally. We know this industry from the inside.</p>
+      </div>
+      <div class="why-item reveal reveal-delay-1">
+        <span class="why-num">02</span>
+        <h4>Award-Winning Creative</h4>
+        <p>Award-winning creative work recognised internationally across the travel industry, including the prestigious Magellan Award.</p>
+      </div>
+      <div class="why-item reveal reveal-delay-2">
+        <span class="why-num">03</span>
+        <h4>Flexible &amp; Collaborative</h4>
+        <p>A flexible and efficient team with close collaboration with clients and senior leadership involved in every project — not handed off to juniors.</p>
+      </div>
+      <div class="why-item reveal reveal-delay-3">
+        <span class="why-num">04</span>
+        <h4>Cultural Respect</h4>
+        <p>Strong respect for local culture and community voices. We listen before we create, and we celebrate what makes a place genuinely unique.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE TEAM -->
+  <hr class="section-sep">
+  <section id="team">
+    <div class="team-intro">
+      <span class="eyebrow">The Team</span>
+      <h2 class="h2 reveal">An all-star team with<br>deep PNG roots</h2>
+      <p class="body-text reveal reveal-delay-1">We have assembled a team with genuine history and passion for Papua New Guinea — not generalists parachuted in, but people who have spent years on the ground and in the boardrooms of PNG tourism.</p>
+    </div>
+    <div class="team-grid">
+
+      <!-- Justin -->
+      <div class="team-card" onclick="toggleBio(this)">
+        <div class="team-card-inner">
+          <img class="team-photo" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='800'%3E%3Crect fill='%23161616' width='600' height='800'/%3E%3C/svg%3E" id="justin-photo" alt="Justin Jamieson">
+          <div class="team-overlay">
+            <div class="team-name">Justin Jamieson</div>
+            <div class="team-role">Project Director &amp; Brand Strategy Lead</div>
+          </div>
+        </div>
+        <div class="team-bio-panel">
+          <p>Justin leads the project from start to finish — guiding the research, brand thinking and creative development. Based in Australia, he brings close proximity to the Pacific region and a strong understanding of the tourism landscape. His focus is on shaping a brand that feels authentic to the country, grounded in real insight, and stands out on the global stage.</p>
+        </div>
+      </div>
+
+      <!-- Art Director - TBA -->
+      <div class="team-card">
+        <div class="team-coming-soon">
+          <span>Art Director</span>
+          <span style="color:#444; font-size:10px; letter-spacing:2px;">Profile coming soon</span>
+        </div>
+        <div class="team-bio-panel" style="max-height: unset; padding: 28px 32px;">
+          <p style="font-size:14px; line-height:1.8; color:rgba(255,255,255,0.6);">Senior Art Director — Brand Identity &amp; Creative. Draws from Papua New Guinea's extraordinary visual language — from tapa and woven fibres to the bold colours and symbolism in sing sing costumes, masks, carvings and body paint — translating it into a distinctive and authentic destination identity.</p>
+        </div>
+      </div>
+
+      <!-- Ally -->
+      <div class="team-card" onclick="toggleBio(this)">
+        <div class="team-card-inner">
+          <img class="team-photo" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='800'%3E%3Crect fill='%23161616' width='600' height='800'/%3E%3C/svg%3E" id="ally-photo" alt="Ally Stoltz LaBriola">
+          <div class="team-overlay">
+            <div class="team-name">Ally Stoltz LaBriola</div>
+            <div class="team-role">Stakeholder Engagement &amp; International Strategy</div>
+          </div>
+        </div>
+        <div class="team-bio-panel">
+          <p>Seven years representing PNGTPA in North America. Sixteen trips to Papua New Guinea, meeting face-to-face with key stakeholders across the country. Her Tok Pisin isn't too bad either. From Airways Hotel to villages outside Tufi Resort — PNG has a piece of her heart, and she brings that depth of relationship to this project.</p>
+        </div>
+      </div>
+
+      <!-- Alan -->
+      <div class="team-card" onclick="toggleBio(this)">
+        <div class="team-card-inner">
+          <img class="team-photo" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='800'%3E%3Crect fill='%23161616' width='600' height='800'/%3E%3C/svg%3E" id="alan-photo" alt="Alan Elliott Merschen">
+          <div class="team-overlay">
+            <div class="team-name">Alan Elliott Merschen</div>
+            <div class="team-role">Senior Advisor to the Project</div>
+          </div>
+        </div>
+        <div class="team-bio-panel">
+          <p>As Founder and CEO of Myriad, Alan had the honour of representing PNGTPA for more than a decade. He knows the destination from the 30,000-foot view — meetings with ministers and CEOs — through to experiences at ground level, from scuba diving to sing sings. After selling Myriad, he now focuses on the work he cares about most, serving on advisory boards worldwide. This is exactly that kind of work.</p>
+        </div>
+      </div>
+
+    </div>
+    <p style="margin-top:24px; font-size:12px; color:#333; letter-spacing:1px;">Click any team member to read their full biography.</p>
+  </section>
+
+  <!-- THE ASSIGNMENT -->
+  <hr class="section-sep">
+  <section id="assignment">
+    <div class="assignment-layout">
+      <div>
+        <span class="eyebrow">Understanding the Assignment</span>
+        <h2 class="h2 reveal">Papua New Guinea has<br>a powerful story to tell</h2>
+        <p class="body-text reveal reveal-delay-1">The opportunity is to shape a destination brand that presents Papua New Guinea confidently and authentically to the world — reflecting the culture and spirit of the country while speaking clearly to international travellers and helping tourism partners share the same message. A strong destination brand helps a country stand tall and be understood globally.</p>
+      </div>
+      <div>
+        <div class="assignment-points reveal reveal-delay-2">
+          <div class="point-row">
+            <div class="point-dot"></div>
+            <p>Reflect the culture and spirit of the country</p>
+          </div>
+          <div class="point-row">
+            <div class="point-dot"></div>
+            <p>Present Papua New Guinea confidently to the world</p>
+          </div>
+          <div class="point-row">
+            <div class="point-dot"></div>
+            <p>Speak clearly to international travellers</p>
+          </div>
+          <div class="point-row">
+            <div class="point-dot"></div>
+            <p>Help tourism partners share the same message</p>
+          </div>
+          <div class="point-row">
+            <div class="point-dot"></div>
+            <p>Build on existing strengths while addressing brand challenges</p>
+          </div>
+          <div class="point-row">
+            <div class="point-dot"></div>
+            <p>Create a destination identity that stands on the global stage</p>
+          </div>
+          <div class="point-row">
+            <div class="point-dot"></div>
+            <p>Establish clear positioning versus competitor destinations</p>
+          </div>
+          <div class="point-row">
+            <div class="point-dot"></div>
+            <p>Develop a corporate identity for PNGTPA that aligns with the destination brand</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESEARCH & DISCOVERY -->
+  <hr class="section-sep">
+  <section id="research">
+    <span class="eyebrow">Research &amp; Discovery</span>
+    <h2 class="h2 reveal">Before building a brand,<br>we must understand the full picture</h2>
+    <div class="research-tabs">
+      <button class="rtab active" onclick="switchTab(this,'rt1')">Research Methodology</button>
+      <button class="rtab" onclick="switchTab(this,'rt2')">Public Perception</button>
+      <button class="rtab" onclick="switchTab(this,'rt3')">Media &amp; Digital Sentiment</button>
+      <button class="rtab" onclick="switchTab(this,'rt4')">Consultations</button>
+      <button class="rtab" onclick="switchTab(this,'rt5')">Competitor Analysis</button>
+      <button class="rtab" onclick="switchTab(this,'rt6')">Idea Testing</button>
+    </div>
+    <div id="rt1" class="rtab-content active">
+      <div class="rtab-body">
+        <p>Our research methodology is designed to build a comprehensive, evidence-based foundation for the Papua New Guinea destination brand. We approach this systematically — from quantitative data gathering to qualitative community voices — ensuring no stone is left unturned.</p>
+        <p>The methodology includes desk research, primary research with key audiences, and a structured synthesis process that feeds directly into brand strategy development.</p>
+      </div>
+      <ul class="rtab-list">
+        <li>Desk research and secondary data review</li>
+        <li>Quantitative survey design and deployment</li>
+        <li>Qualitative interview frameworks</li>
+        <li>Data synthesis and insight mapping</li>
+        <li>Brand audit against current positioning</li>
+        <li>Gap analysis and opportunity identification</li>
+      </ul>
+    </div>
+    <div id="rt2" class="rtab-content">
+      <div class="rtab-body">
+        <p>Understanding how Papua New Guinea is currently perceived by international travellers — and non-travellers — is critical. We will study awareness, associations, and emotional connections with the destination across priority markets.</p>
+        <p>This research identifies both barriers to visitation and compelling motivators that can anchor the new brand positioning.</p>
+      </div>
+      <ul class="rtab-list">
+        <li>International traveller perception surveys</li>
+        <li>Awareness and consideration tracking in priority markets</li>
+        <li>Emotional association mapping</li>
+        <li>Barrier and motivator analysis</li>
+        <li>Comparison with competing destination perceptions</li>
+      </ul>
+    </div>
+    <div id="rt3" class="rtab-content">
+      <div class="rtab-body">
+        <p>A thorough review of media coverage, travel editorial, social media, review platforms and digital content will reveal how Papua New Guinea is currently being discussed, portrayed and shared by travellers, journalists and influencers.</p>
+        <p>Sentiment analysis helps identify narrative gaps and brand opportunities in the existing media ecosystem.</p>
+      </div>
+      <ul class="rtab-list">
+        <li>Media coverage audit (print and digital)</li>
+        <li>Social media sentiment analysis</li>
+        <li>Review platform analysis (TripAdvisor, Google, etc.)</li>
+        <li>Travel blogger and influencer content review</li>
+        <li>Search trend analysis by market</li>
+        <li>Earned media narrative mapping</li>
+      </ul>
+    </div>
+    <div id="rt4" class="rtab-content">
+      <div class="rtab-body">
+        <p>Broad stakeholder consultation is essential to ensure the new brand genuinely reflects the people and communities of Papua New Guinea. We will engage government, industry operators, community leaders, and tourism partners throughout the process.</p>
+        <p>These consultations are not box-ticking — they are integral to developing a brand that has authentic buy-in from those who live it every day.</p>
+      </div>
+      <ul class="rtab-list">
+        <li>PNGTPA leadership and government stakeholder interviews</li>
+        <li>Tourism operator workshops across regions</li>
+        <li>Community and cultural leader consultations</li>
+        <li>International trade and travel agent input</li>
+        <li>Airlines and key industry partner briefings</li>
+        <li>Online consultation platforms for broader reach</li>
+      </ul>
+    </div>
+    <div id="rt5" class="rtab-content">
+      <div class="rtab-body">
+        <p>Understanding how competitor destinations position themselves helps identify white space where Papua New Guinea can claim a genuinely differentiated and ownable position. We assess both regional and global competitors.</p>
+        <p>This analysis reveals conventions to challenge and opportunities to lead — ensuring PNG isn't following a category playbook but setting its own.</p>
+      </div>
+      <ul class="rtab-list">
+        <li>Regional competitor brand audit (Pacific, Southeast Asia)</li>
+        <li>Global adventure and cultural destination benchmarking</li>
+        <li>Positioning statement analysis</li>
+        <li>Visual identity and tone of voice comparison</li>
+        <li>Campaign and messaging review</li>
+        <li>Market differentiation mapping</li>
+      </ul>
+    </div>
+    <div id="rt6" class="rtab-content">
+      <div class="rtab-body">
+        <p>Brand ideas will be tested with real audiences before being finalised. This ensures the new destination brand resonates as intended — in priority markets and across the diverse communities of Papua New Guinea.</p>
+        <p>Testing is iterative, allowing us to refine ideas based on real feedback rather than assumptions, and giving PNGTPA confidence before committing to final creative direction.</p>
+      </div>
+      <ul class="rtab-list">
+        <li>Concept testing with target traveller segments</li>
+        <li>Positioning statement testing in priority markets</li>
+        <li>Visual identity concept evaluation</li>
+        <li>Message testing with industry stakeholders</li>
+        <li>Iterative refinement based on testing feedback</li>
+        <li>Final validation before brand launch</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- PHASES: BRAND DEVELOPMENT -->
+  <hr class="section-sep">
+  <section id="phases">
+    <span class="eyebrow">Our Approach</span>
+    <h2 class="h2 reveal">A structured, phased<br>process for lasting results</h2>
+    <div class="phases-accordion">
+
+      <div class="phase-item open">
+        <div class="phase-header" onclick="togglePhase(this)">
+          <div class="phase-left">
+            <div class="phase-num">01</div>
+            <div>
+              <div class="phase-title">Phase 1 — Brand Audit &amp; Strategy</div>
+              <div class="phase-tag">Understanding the brand / Research &amp; Discovery</div>
+            </div>
+          </div>
+          <div class="phase-arrow">+</div>
+        </div>
+        <div class="phase-body">
+          <div class="phase-content">
+            <div class="phase-deliverables">
+              <h5>What we need to understand</h5>
+              <ul>
+                <li>How Papua New Guinea is currently perceived internationally</li>
+                <li>What strengths the destination already has and can build on</li>
+                <li>What challenges the brand currently faces in priority markets</li>
+                <li>How competitor destinations position themselves</li>
+                <li>What past branding efforts have worked — and what hasn't</li>
+              </ul>
+            </div>
+            <div class="phase-deliverables">
+              <h5>Deliverables from Grin</h5>
+              <ul>
+                <li>Full brand audit report</li>
+                <li>Stakeholder consultation summary</li>
+                <li>Market and perception research findings</li>
+                <li>Competitor benchmarking analysis</li>
+                <li>Destination brand strategy document</li>
+                <li>Identity system development (logo, colour, typography)</li>
+                <li>Brand guidelines</li>
+                <li>Rollout roadmap</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-item">
+        <div class="phase-header" onclick="togglePhase(this)">
+          <div class="phase-left">
+            <div class="phase-num">02</div>
+            <div>
+              <div class="phase-title">Phase 2 — Destination Brand Development</div>
+              <div class="phase-tag">Positioning / Story / Visual Identity</div>
+            </div>
+          </div>
+          <div class="phase-arrow">+</div>
+        </div>
+        <div class="phase-body">
+          <div class="phase-content">
+            <div class="phase-deliverables">
+              <h5>Brand elements we will build</h5>
+              <ul>
+                <li>Clear destination positioning for Papua New Guinea</li>
+                <li>A strong brand story — what makes the country unique</li>
+                <li>Key messages that describe the destination</li>
+                <li>Tone of voice that reflects the country's spirit</li>
+                <li>A visual identity drawn from PNG's extraordinary culture</li>
+              </ul>
+            </div>
+            <div class="phase-deliverables">
+              <h5>Deliverables from Grin</h5>
+              <ul>
+                <li>Brand story and positioning narrative</li>
+                <li>Identity system — logo, colours, visual language</li>
+                <li>Brand guidelines document</li>
+                <li>Tone of voice guide</li>
+                <li>Partner adoption toolkit</li>
+                <li>Sample brand applications across key touchpoints</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-item">
+        <div class="phase-header" onclick="togglePhase(this)">
+          <div class="phase-left">
+            <div class="phase-num">03</div>
+            <div>
+              <div class="phase-title">Phase 3 — Corporate Brand for PNGTPA</div>
+              <div class="phase-tag">Organisational Identity / Communications</div>
+            </div>
+          </div>
+          <div class="phase-arrow">+</div>
+        </div>
+        <div class="phase-body">
+          <div class="phase-content">
+            <div class="phase-deliverables">
+              <h5>Corporate identity scope</h5>
+              <ul>
+                <li>PNGTPA corporate positioning — how the organisation represents itself</li>
+                <li>Corporate messaging framework</li>
+                <li>Visual identity aligned with the destination brand</li>
+                <li>Templates for official communications and presentations</li>
+                <li>Guidelines for how PNGTPA represents PNG internationally</li>
+              </ul>
+            </div>
+            <div class="phase-deliverables">
+              <h5>Deliverables from Grin</h5>
+              <ul>
+                <li>PNGTPA corporate brand document</li>
+                <li>Messaging framework for key audiences</li>
+                <li>Presentation template suite</li>
+                <li>Official communications templates</li>
+                <li>Corporate brand guidelines</li>
+                <li>Staff and leadership brand usage guide</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-item">
+        <div class="phase-header" onclick="togglePhase(this)">
+          <div class="phase-left">
+            <div class="phase-num">04</div>
+            <div>
+              <div class="phase-title">Phase 4 — Brand Implementation &amp; Rollout</div>
+              <div class="phase-tag">Launch / Partner Activation / Industry Adoption</div>
+            </div>
+          </div>
+          <div class="phase-arrow">+</div>
+        </div>
+        <div class="phase-body">
+          <div class="phase-content">
+            <div class="phase-deliverables">
+              <h5>A brand that gets used</h5>
+              <ul>
+                <li>A strong brand only works when partners use it confidently</li>
+                <li>Industry briefing sessions across PNG</li>
+                <li>Operator and partner marketing toolkit</li>
+                <li>Media and PR launch guidance</li>
+                <li>Brand usage guide for operators and partners</li>
+              </ul>
+            </div>
+            <div class="phase-deliverables">
+              <h5>Deliverables from Grin</h5>
+              <ul>
+                <li>Brand launch strategy and execution plan</li>
+                <li>Tourism industry briefing materials</li>
+                <li>Partner marketing toolkit (digital + print)</li>
+                <li>Media and PR launch guidance document</li>
+                <li>Brand usage guide for all operators</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-item">
+        <div class="phase-header" onclick="togglePhase(this)">
+          <div class="phase-left">
+            <div class="phase-num">05</div>
+            <div>
+              <div class="phase-title">Phase 5 — Global Communication Strategy</div>
+              <div class="phase-tag">International Markets / PR / Messaging Toolkit</div>
+            </div>
+          </div>
+          <div class="phase-arrow">+</div>
+        </div>
+        <div class="phase-body">
+          <div class="phase-content">
+            <div class="phase-deliverables">
+              <h5>Taking PNG to the world</h5>
+              <ul>
+                <li>Global communications strategy across priority markets</li>
+                <li>Guidance on media and public relations</li>
+                <li>Messaging tailored for priority tourism markets</li>
+                <li>A toolkit that partners can use when promoting PNG</li>
+                <li>Reputation management guidance</li>
+              </ul>
+            </div>
+            <div class="phase-deliverables">
+              <h5>Deliverables from Grin</h5>
+              <ul>
+                <li>Global communications strategy document</li>
+                <li>PR and reputation management framework</li>
+                <li>Priority market messaging guide</li>
+                <li>Market-facing messaging toolkit</li>
+                <li>Executive strategy presentation</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- TIMELINE -->
+  <hr class="section-sep">
+  <section id="timeline">
+    <span class="eyebrow">Proposed Timeline</span>
+    <h2 class="h2 reveal">A structured, phased<br>process aligned with the ToR</h2>
+    <p class="body-text reveal reveal-delay-1" style="margin-bottom: 60px;">Phase 1 is expected to be completed within 8–12 weeks, in line with PNGTPA guidance. Phase 2 will proceed following PNGTPA endorsement of Phase 1 deliverables. The full project is structured to ensure thorough research, meaningful consultation and lasting results.</p>
+    <div class="timeline-layout reveal reveal-delay-2">
+      <div class="timeline-labels">
+        <div class="tl-label">Weeks 1–3</div>
+        <div class="tl-label">Weeks 3–6</div>
+        <div class="tl-label">Weeks 6–9</div>
+        <div class="tl-label">Weeks 9–12</div>
+        <div class="tl-label">Post Endorsement</div>
+        <div class="tl-label">Ongoing</div>
+      </div>
+      <div class="timeline-bars">
+        <div class="tl-phase">
+          <div class="tl-fill" data-width="30%"></div>
+          <span class="tl-phase-name">Brand Audit, Desk Research &amp; Stakeholder Consultations</span>
+          <span class="tl-weeks">Weeks 1–3</span>
+        </div>
+        <div class="tl-phase">
+          <div class="tl-fill" data-width="55%"></div>
+          <span class="tl-phase-name">Perception Research, Competitor Analysis &amp; Market Review</span>
+          <span class="tl-weeks">Weeks 3–6</span>
+        </div>
+        <div class="tl-phase">
+          <div class="tl-fill" data-width="75%"></div>
+          <span class="tl-phase-name">Destination Brand Strategy, Positioning &amp; Identity Development</span>
+          <span class="tl-weeks">Weeks 6–9</span>
+        </div>
+        <div class="tl-phase">
+          <div class="tl-fill" data-width="90%"></div>
+          <span class="tl-phase-name">Brand Guidelines, Corporate Brand &amp; Rollout Roadmap</span>
+          <span class="tl-weeks">Weeks 9–12</span>
+        </div>
+        <div class="tl-phase">
+          <div class="tl-fill" data-width="70%"></div>
+          <span class="tl-phase-name">Global Communications Strategy &amp; PR Framework</span>
+          <span class="tl-weeks">Phase 2</span>
+        </div>
+        <div class="tl-phase">
+          <div class="tl-fill" data-width="50%"></div>
+          <span class="tl-phase-name">Partner Toolkits, Launch Support &amp; Ongoing Advisory</span>
+          <span class="tl-weeks">Ongoing</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUDGET -->
+  <hr class="section-sep">
+  <section id="budget">
+    <span class="eyebrow">Budget</span>
+    <h2 class="h2 reveal">Investment in PNG's<br>future on the world stage</h2>
+    <p class="body-text reveal reveal-delay-1" style="margin-bottom: 60px;">The following outlines the investment structure for both phases of the project. Final figures will be confirmed upon scope finalisation with PNGTPA.</p>
+    <div class="budget-wrap reveal reveal-delay-2">
+      <div class="budget-phase">
+        <div class="budget-phase-title">Phase 1</div>
+        <span class="budget-phase-sub">Destination Brand Positioning &amp; Strategy</span>
+        <div class="budget-items">
+          <div class="budget-row">
+            <span>Research &amp; Discovery</span>
+            <span>TBC</span>
+          </div>
+          <div class="budget-row">
+            <span>Brand Audit</span>
+            <span>TBC</span>
+          </div>
+          <div class="budget-row">
+            <span>Stakeholder Consultations</span>
+            <span>TBC</span>
+          </div>
+          <div class="budget-row">
+            <span>Destination Brand Strategy</span>
+            <span>TBC</span>
+          </div>
+          <div class="budget-row">
+            <span>Identity System Development</span>
+            <span>TBC</span>
+          </div>
+          <div class="budget-row">
+            <span>Brand Guidelines</span>
+            <span>TBC</span>
+          </div>
+          <div class="budget-row">
+            <span>Rollout Roadmap</span>
+            <span>TBC</span>
+          </div>
+        </div>
+        <span class="budget-total-label">Phase 1 Total</span>
+        <div class="budget-total-value">To be confirmed</div>
+        <p class="budget-placeholder-note">Budget details to be provided by Grin Creative</p>
+      </div>
+      <div class="budget-phase">
+        <div class="budget-phase-title">Phase 2</div>
+        <span class="budget-phase-sub">Global Communications &amp; PR Strategy</span>
+        <div class="budget-items">
+          <div class="budget-row">
+            <span>Global Communications Strategy</span>
+            <span>TBC</span>
+          </div>
+          <div class="budget-row">
+            <span>Public Relations Framework</span>
+            <span>TBC</span>
+          </div>
+          <div class="budget-row">
+            <span>Priority Market Messaging</span>
+            <span>TBC</span>
+          </div>
+          <div class="budget-row">
+            <span>Messaging Toolkit</span>
+            <span>TBC</span>
+          </div>
+          <div class="budget-row">
+            <span>Executive Presentation</span>
+            <span>TBC</span>
+          </div>
+          <div class="budget-row">
+            <span>Payment Milestones</span>
+            <span>TBC</span>
+          </div>
+        </div>
+        <span class="budget-total-label">Phase 2 Total</span>
+        <div class="budget-total-value">To be confirmed</div>
+        <p class="budget-placeholder-note">Proceeds following PNGTPA endorsement of Phase 1</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT / FOOTER -->
+  <footer id="contact" class="footer-wrap">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand">Grin<br>Creative</div>
+        <p style="font-size:13px; color:#444; letter-spacing:1px; line-height:1.8;">Melbourne, Australia<br>Founded 2013</p>
+      </div>
+      <div class="footer-col">
+        <span class="footer-col-title">Studio Address</span>
+        <p>Studio 04</p>
+        <p>281 Brunswick Street</p>
+        <p>Fitzroy VIC 3065</p>
+        <p>Australia</p>
+      </div>
+      <div class="footer-col">
+        <span class="footer-col-title">Get in Touch</span>
+        <a href="https://grincreative.com.au">grincreative.com.au</a>
+        <p style="margin-top:16px; font-size:12px; color:#333; letter-spacing:1px;">Project Director</p>
+        <p>Justin Jamieson</p>
+        <a href="mailto:justin.jamieson@grincreative.com.au">justin.jamieson@grincreative.com.au</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© Grin Creative Pty Ltd 2025</p>
+      <p class="footer-acknowledgement">We acknowledge the traditional custodians of the lands upon which we work — the Wurundjeri people of the Kulin nation — and pay our respects to their Elders, past, present and emerging.</p>
+    </div>
+  </footer>
+
+</div><!-- /main -->
+
+<script>
+/* ─── TEAM PHOTO LOADER ─────────────────────────────── */
+// Place team photo files in the same directory as this file:
+// justin.jpg, ally.jpg, alan.jpg
+// Then update the src attributes below:
+(function loadTeamPhotos() {
+  const photos = [
+    { id: 'justin-photo', src: 'justin.jpg' },
+    { id: 'ally-photo',   src: 'ally.jpg'   },
+    { id: 'alan-photo',   src: 'alan.jpg'   },
+  ];
+  photos.forEach(function(p) {
+    var img = document.getElementById(p.id);
+    if (!img) return;
+    var test = new Image();
+    test.onload = function() { img.src = p.src; };
+    test.src = p.src;
+  });
+})();
+
+/* ─── PASSWORD ──────────────────────────────────────── */
+var PW = 'grin';
+var input = document.getElementById('pw-input');
+var screen = document.getElementById('pw-screen');
+var main   = document.getElementById('main');
+var pwErr  = document.getElementById('pw-error');
+
+input.focus();
+input.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') checkPassword();
+});
+
+function checkPassword() {
+  if (input.value.trim().toLowerCase() === PW) {
+    screen.classList.add('hide');
+    setTimeout(function() {
+      screen.style.display = 'none';
+      main.classList.add('show');
+      initScrollEffects();
+    }, 650);
+  } else {
+    input.value = '';
+    pwErr.classList.add('show');
+    input.style.borderBottomColor = '#e05555';
+    setTimeout(function() {
+      pwErr.classList.remove('show');
+      input.style.borderBottomColor = '';
+    }, 2000);
+  }
+}
+
+/* ─── NAV SCROLL ────────────────────────────────────── */
+function initScrollEffects() {
+  var nav = document.getElementById('nav');
+  var progress = document.getElementById('scroll-progress');
+
+  window.addEventListener('scroll', function() {
+    var scrollY = window.scrollY;
+    var docH = document.documentElement.scrollHeight - window.innerHeight;
+    progress.style.width = (scrollY / docH * 100) + '%';
+    if (scrollY > 60) nav.classList.add('scrolled');
+    else nav.classList.remove('scrolled');
+    checkReveal();
+    checkTimeline();
+  });
+
+  checkReveal();
+}
+
+/* ─── REVEAL ANIMATIONS ─────────────────────────────── */
+function checkReveal() {
+  document.querySelectorAll('.reveal').forEach(function(el) {
+    var rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight * 0.88) {
+      el.classList.add('visible');
+    }
+  });
+}
+
+/* ─── TIMELINE BARS ─────────────────────────────────── */
+var timelineAnimated = false;
+function checkTimeline() {
+  if (timelineAnimated) return;
+  var tl = document.querySelector('.timeline-bars');
+  if (!tl) return;
+  var rect = tl.getBoundingClientRect();
+  if (rect.top < window.innerHeight * 0.85) {
+    timelineAnimated = true;
+    document.querySelectorAll('.tl-fill').forEach(function(el) {
+      el.style.width = el.getAttribute('data-width');
+    });
+  }
+}
+// Init fills at 0
+document.querySelectorAll('.tl-fill').forEach(function(el) {
+  el.style.width = '0%';
+});
+
+/* ─── RESEARCH TABS ─────────────────────────────────── */
+function switchTab(btn, contentId) {
+  document.querySelectorAll('.rtab').forEach(function(b) { b.classList.remove('active'); });
+  document.querySelectorAll('.rtab-content').forEach(function(c) { c.classList.remove('active'); });
+  btn.classList.add('active');
+  document.getElementById(contentId).classList.add('active');
+}
+
+/* ─── PHASE ACCORDION ───────────────────────────────── */
+function togglePhase(header) {
+  var item = header.parentElement;
+  var isOpen = item.classList.contains('open');
+  document.querySelectorAll('.phase-item').forEach(function(i) { i.classList.remove('open'); });
+  if (!isOpen) item.classList.add('open');
+}
+
+/* ─── TEAM BIO TOGGLE ───────────────────────────────── */
+function toggleBio(card) {
+  var isOpen = card.classList.contains('open');
+  document.querySelectorAll('.team-card').forEach(function(c) { c.classList.remove('open'); });
+  if (!isOpen) card.classList.add('open');
+}
+
+/* ─── SMOOTH NAV LINKS ──────────────────────────────── */
+document.querySelectorAll('a[href^="#"]').forEach(function(a) {
+  a.addEventListener('click', function(e) {
+    e.preventDefault();
+    var target = document.querySelector(this.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+</script>
+</body>
+</html>
